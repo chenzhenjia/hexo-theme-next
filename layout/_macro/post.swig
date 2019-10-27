@@ -280,6 +280,7 @@
             </div>
           </div>
         {%- endif %}
+        {% include 'google_adsense.swig' %}
       </footer>
     {% else %}
       <footer class="post-footer">
