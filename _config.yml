@@ -120,8 +120,7 @@ scheme: Pisces
 
 # Usage: `Key: /link/ || icon`
 # Key is the name of menu item. If the translation for this item is available, the translated text will be loaded, otherwise the Key name will be used. Key is case-senstive.
-# Value before `||` delimiter is the target link.
-# Value after `||` delimiter is the name of Font Awesome icon. If icon (with or without delimiter) is not specified, question icon will be loaded.
+# Value before `||` delimiter is the target link, value after `||` delimiter is the name of Font Awesome icon.
 # When running the site in a subdirectory (e.g. domain.tld/blog), remove the leading slash from link value (/archives -> archives).
 # External url should start with http:// or https://
 menu:
@@ -169,9 +168,7 @@ sidebar:
 
 # Sidebar Avatar
 avatar:
-  # In theme directory (source/images): /images/avatar.gif
-  # In site directory (source/uploads): /uploads/avatar.gif
-  # You can also use other linking images.
+  # Replace the default image and set the url here.
   url: #/images/avatar.gif
   # If true, the avatar would be dispalyed in circle.
   rounded: false
@@ -184,8 +181,7 @@ site_state: true
 # Social Links
 # Usage: `Key: permalink || icon`
 # Key is the link label showing to end users.
-# Value before `||` delimiter is the target permalink.
-# Value after `||` delimiter is the name of Font Awesome icon. If icon (with or without delimiter) is not specified, globe icon will be loaded.
+# Value before `||` delimiter is the target permalink, value after `||` delimiter is the name of Font Awesome icon.
 social:
   #GitHub: https://github.com/yourname || github
   #E-Mail: mailto:yourname@gmail.com || envelope
@@ -215,6 +211,7 @@ links:
   #Title: http://example.com
 
 # Table of Contents in the Sidebar
+# Front-matter variable (unsupport wrap expand_all).
 toc:
   enable: true
   # Automatically add list number to toc.
@@ -223,7 +220,7 @@ toc:
   wrap: false
   # If true, all level of TOC in a post will be displayed, rather than the activated part of it.
   expand_all: false
-  # Maximum heading depth of generated toc. You can set it in one post through `toc_max_depth` in Front-matter.
+  # Maximum heading depth of generated toc.
   max_depth: 6
 
 # A button to open designated chat widget in sidebar.
@@ -240,9 +237,6 @@ chat:
 # Post Settings
 # See: https://theme-next.org/docs/theme-settings/posts
 # ---------------------------------------------------------------
-
-# Automatically scroll page to section which is under <!-- more --> mark.
-scroll_to_more: true
 
 # Automatically excerpt description in homepage as preamble text.
 excerpt_description: true
@@ -278,16 +272,10 @@ symbols_count_time:
 # Use icon instead of the symbol # to indicate the tag at the bottom of the post
 tag_icon: false
 
-# Wechat Subscriber
-wechat_subscriber:
-  enable: false
-  qcode: #/uploads/wechat-qcode.jpg
-  #description: Subscribe to my blog by scanning my public wechat account.
-
 # Reward (Donate)
+# Front-matter variable (unsupport animation).
 reward_settings:
   # If true, reward would be displayed in every article by default.
-  # You can show or hide reward in a specific article throuth `reward: true | false` in Front-matter.
   enable: false
   animation: false
   #comment: Donate comment here.
@@ -328,7 +316,7 @@ cheers: true
 
 # TagCloud settings for tags page.
 tagcloud:
-  # All values below are same as default, change them by yourself
+  # All values below are same as default, change them by yourself.
   min: 12 # Minimun font size in px
   max: 30 # Maxium font size in px
   start: "#ccc" # Start color (hex, rgba, hsla or color keywords)
@@ -337,9 +325,6 @@ tagcloud:
 
 # Google Calendar
 # Share your recent schedule to others via calendar page.
-# API Documentation: https://developers.google.com/google-apps/calendar/v3/reference/events/list
-# To get api_key: https://console.developers.google.com
-# Create & manage a public Google calendar: https://support.google.com/calendar/answer/37083
 calendar:
   calendar_id: <required> # Your Google account E-Mail
   api_key: <required>
@@ -369,9 +354,6 @@ android_chrome_color: "#222"
 
 # Hide sticky headers and color the menu bar on Safari (iOS / macOS).
 safari_rainbow: false
-
-# Optimize the display of scrollbars on webkit based browsers.
-custom_scrollbar: false
 
 # Custom Logo (Do not support scheme Mist)
 custom_logo: #/uploads/custom-logo.jpg
@@ -526,8 +508,6 @@ baidu_push: false
 
 # Math Formulas Render Support
 math:
-  enable: false
-
   # Default (true) will load mathjax / katex script on demand.
   # That is it only render those page which has `mathjax: true` in Front-matter.
   # If you set it to false, it will load mathjax / katex srcipt EVERY PAGE.
@@ -569,14 +549,14 @@ pangu: false
 
 # Quicklink Support
 # For more information: https://github.com/GoogleChromeLabs/quicklink
+# Front-matter (unsupport home archive).
 quicklink:
   enable: false
 
-  # Quicklink (quicklink.umd.js script) is loaded on demand.
-  # Add `quicklink: true` in Front-matter of the page or post you need.
   # Home page and archive page can be controlled through home and archive options below.
-  home: true
-  archive: true
+  # This configuration item is independent of `enable`.
+  home: false
+  archive: false
 
   # Default (true) will initialize quicklink after the load event fires.
   delay: true
@@ -600,7 +580,7 @@ comments:
   # Available values: tabs | buttons
   style: tabs
   # Choose a comment system to be displayed by default.
-  # Available values: changyan | disqus | disqusjs | facebook_comments_plugin | gitalk | livere | valine | vkontakte
+  # Available values: changyan | disqus | disqusjs | gitalk | livere | valine
   active:
   # Setting `true` means remembering the comment system selected by the visitor.
   storage: true
@@ -609,8 +589,6 @@ comments:
     #disqus:
     #  text: Load Disqus
     #  order: -1
-    #facebook_comments_plugin:
-    #  text: <i class="fa fa-facebook-official" aria-hidden="true"></i> facebook
     #gitalk:
     #  order: -2
 
@@ -690,33 +668,6 @@ gitalk:
 # See: https://theme-next.org/docs/third-party-services/post-widgets
 # ---------------------------------------------------------------
 
-# Facebook SDK Support
-facebook_sdk:
-  enable:       false
-  app_id:       # <app_id>
-  fb_admin:     # <user_id>
-  like_button:  # true
-  webmaster:    # true
-
-# Facebook comments plugin
-# This plugin depends on Facebook SDK.
-# If facebook_sdk.enable is false, Facebook comments plugin is unavailable.
-facebook_comments_plugin:
-  enable:       false
-  num_of_posts: 10    # Minimum posts num is 1
-  width:        100%  # Default width is 550px
-  scheme:       light # Default scheme is light (light or dark)
-  #post_meta_order: 0
-
-# VKontakte API Support
-# To get your AppID visit https://vk.com/editapp?act=create
-vkontakte_api:
-  enable:       false
-  app_id:       # <app_id>
-  like:         true
-  comments:     true
-  num_of_posts: 10
-
 # Star rating support to each article.
 # To get your ID visit https://widgetpack.com
 rating:
@@ -734,13 +685,6 @@ add_this_id:
 # See: https://theme-next.org/docs/third-party-services/statistics-and-analytics
 # ---------------------------------------------------------------
 
-# Baidu Analytics
-baidu_analytics: # <app_id>
-
-# Growingio Analytics
-# Copyright 2015-2018 GrowingIO, Inc. More info available at https://www.growingio.com
-growingio_analytics: # <project_id>
-
 # Google Analytics
 google_analytics:
   tracking_id: UA-107997548-2
@@ -749,12 +693,20 @@ google_analytics:
   # If you only need the pageview feature, set the following option to true to get a better performance.
   only_pageview: false
 
+# Baidu Analytics
+baidu_analytics: # <app_id>
+
+# Growingio Analytics
+growingio_analytics: # <project_id>
+
 # CNZZ count
 cnzz_siteid:
 
-# Application Insights
-# See: https://azure.microsoft.com/en-us/services/application-insights
-application_insights:
+# Tencent analytics
+tencent_analytics: # <app_id>
+
+# Tencent MTA
+tencent_mta: # <app_id>
 
 # Show number of visitors to each article.
 # You can visit https://leancloud.cn to get AppID and AppKey.
@@ -787,12 +739,6 @@ busuanzi_count:
   total_views_icon: eye
   post_views: true
   post_views_icon: eye
-
-# Tencent analytics
-tencent_analytics: # <app_id>
-
-# Tencent MTA
-tencent_mta: # <app_id>
 
 
 # ---------------------------------------------------------------
@@ -965,13 +911,12 @@ canvas_ribbon:
 
 # Script Vendors. Set a CDN address for the vendor you want to customize.
 # Be aware that you would better use the same version as internal ones to avoid potential problems.
-# Please use the https protocol of CDN files when you enable https on your site.
+# Remember to use the https protocol of CDN files when you enable https on your site.
 vendors:
-  # Internal path prefix. Please do not edit it.
+  # Internal path prefix.
   _internal: lib
 
   # Internal version: 3.1.0
-  # Example:
   # anime: //cdn.jsdelivr.net/npm/animejs@3.1.0/lib/anime.min.js
   anime:
 
@@ -1039,16 +984,14 @@ vendors:
   # quicklink:
 
   # DisqusJS
-  # Example:
   # disqusjs_js: //cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js
   # disqusjs_css: //cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css
   disqusjs_js:
   disqusjs_css:
 
   # Valine
-  # Example:
   # valine: //cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js
-  # valine: //cdnjs.cloudflare.com/ajax/libs/valine/1.3.4/Valine.min.js
+  # valine: //cdnjs.cloudflare.com/ajax/libs/valine/1.3.10/Valine.min.js
   valine:
 
   # Gitalk
@@ -1059,26 +1002,22 @@ vendors:
   # gitalk_css:
 
   # Algolia Search
-  # Example:
   # algolia_instant_js: //cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.js
   # algolia_instant_css: //cdn.jsdelivr.net/npm/instantsearch.js@2/dist/instantsearch.min.css
   algolia_instant_js:
   algolia_instant_css:
 
   # PDF
-  # Example:
   # pdfobject: //cdn.jsdelivr.net/npm/pdfobject@2/pdfobject.min.js
   # pdfobject: //cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js
   pdfobject:
 
   # Mermaid
-  # Example:
   # mermaid: //cdn.jsdelivr.net/npm/mermaid@8/dist/mermaid.min.js
-  # mermaid: //cdnjs.cloudflare.com/ajax/libs/mermaid/8.0.0/mermaid.min.js
+  # mermaid: //cdnjs.cloudflare.com/ajax/libs/mermaid/8.3.0/mermaid.min.js
   mermaid:
 
   # Internal version: 1.2.1
-  # Example:
   # velocity: //cdn.jsdelivr.net/npm/velocity-animate@1/velocity.min.js
   # velocity: //cdnjs.cloudflare.com/ajax/libs/velocity/1.2.1/velocity.min.js
   # velocity_ui: //cdn.jsdelivr.net/npm/velocity-animate@1/velocity.ui.min.js
