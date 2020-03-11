@@ -247,6 +247,7 @@
         {{ partial('_partials/post/post-footer.swig', {}, {cache: theme.cache.enable}) }}
 
         {{ post_nav(post) }}
+        % include 'google_adsense.swig' %}
       </footer>
     {% else %}
       <footer class="post-footer">
