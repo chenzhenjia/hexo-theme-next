@@ -9,11 +9,10 @@ window.addEventListener('DOMContentLoaded', () => {
   let searchPath = CONFIG.path;
   if (searchPath.length === 0) {
     searchPath = 'search.xml';
-  } else if (/json$/i.test(searchPath)) {
+  } else if (searchPath.endsWith('json')) {
     isXml = false;
   }
-  const path = CONFIG.root + searchPath;
-  const input = document.getElementById('search-input');
+  const input = document.querySelector('.search-input');
   const resultContent = document.getElementById('search-result');
 
   // Ref: https://github.com/ForbesLindesay/unescape-html
@@ -42,10 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
       word = word.toLowerCase();
     }
     while ((position = text.indexOf(word, startPosition)) > -1) {
-      index.push({
-        position: position,
-        word    : word
-      });
+      index.push({ position, word });
       startPosition = position + wordLen;
     }
     return index;
@@ -54,8 +50,7 @@ window.addEventListener('DOMContentLoaded', () => {
   // Merge hits into slices
   const mergeIntoSlice = (start, end, index, searchText) => {
     let item = index[index.length - 1];
-    let position = item.position;
-    let word = item.word;
+    let { position, word } = item;
     let hits = [];
     let searchTextCountInSlice = 0;
     while (position + word.length <= end && index.length !== 0) {
@@ -63,8 +58,8 @@ window.addEventListener('DOMContentLoaded', () => {
         searchTextCountInSlice++;
       }
       hits.push({
-        position: position,
-        length  : word.length
+        position,
+        length: word.length
       });
       let wordEnd = position + word.length;
 
@@ -82,9 +77,9 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     }
     return {
-      hits           : hits,
-      start          : start,
-      end            : end,
+      hits,
+      start,
+      end,
       searchTextCount: searchTextCountInSlice
     };
   };
@@ -104,6 +99,7 @@ window.addEventListener('DOMContentLoaded', () => {
   };
 
   const inputEventFunction = () => {
+    if (!isfetched) return;
     let searchText = input.value.trim().toLowerCase();
     let keywords = searchText.split(/[-\s]+/);
     if (keywords.length > 1) {
@@ -112,20 +108,17 @@ window.addEventListener('DOMContentLoaded', () => {
     let resultItems = [];
     if (searchText.length > 0) {
       // Perform local searching
-      datas.forEach(data => {
-        // Only match articles with not empty titles
-        if (!data.title) return;
-        let searchTextCount = 0;
-        let title = data.title.trim();
+      datas.forEach(({ title, content, url }) => {
+        title = title.trim();
         let titleInLowerCase = title.toLowerCase();
-        let content = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : '';
         if (CONFIG.localsearch.unescape) {
           content = unescapeHtml(content);
         }
         let contentInLowerCase = content.toLowerCase();
-        let articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+        let articleUrl = decodeURIComponent(url).replace(/\/{2,}/g, '/');
         let indexOfTitle = [];
         let indexOfContent = [];
+        let searchTextCount = 0;
         keywords.forEach(keyword => {
           indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
           indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
@@ -154,8 +147,7 @@ window.addEventListener('DOMContentLoaded', () => {
           let slicesOfContent = [];
           while (indexOfContent.length !== 0) {
             let item = indexOfContent[indexOfContent.length - 1];
-            let position = item.position;
-            let word = item.word;
+            let { position, word } = item;
             // Cut out 100 characters
             let start = position - 20;
             let end = position + 80;
@@ -203,10 +195,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
           resultItem += '</li>';
           resultItems.push({
-            item           : resultItem,
-            searchTextCount: searchTextCount,
-            hitCount       : hitCount,
-            id             : resultItems.length
+            item: resultItem,
+            id  : resultItems.length,
+            hitCount,
+            searchTextCount
           });
         }
       });
@@ -234,27 +226,28 @@ window.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const fetchData = callback => {
-    fetch(path)
+  const fetchData = () => {
+    fetch(CONFIG.root + searchPath)
       .then(response => response.text())
       .then(res => {
+        // Remove loading animation
+        document.getElementById('no-result').innerHTML = '<i class="fa fa-search fa-5x"></i>';
+        input.focus();
+
         // Get the contents from search data
         isfetched = true;
         datas = isXml ? [...new DOMParser().parseFromString(res, 'text/xml').querySelectorAll('entry')].map(element => {
           return {
-            title  : element.querySelector('title').innerHTML,
-            content: element.querySelector('content').innerHTML,
-            url    : element.querySelector('url').innerHTML
+            title  : element.querySelector('title').textContent,
+            content: element.querySelector('content').textContent,
+            url    : element.querySelector('url').textContent
           };
         }) : JSON.parse(res);
-
-        // Remove loading animation
-        document.querySelector('.search-pop-overlay').innerHTML = '';
-        document.body.style.overflow = '';
-
-        if (callback) {
-          callback();
-        }
+        // Only match articles with not empty titles
+        datas = datas.filter(data => data.title).map(data => {
+          data.content = data.content ? data.content.trim().replace(/<[^>]+>/g, '') : '';
+          return data;
+        });
       });
   };
 
@@ -262,52 +255,41 @@ window.addEventListener('DOMContentLoaded', () => {
     fetchData();
   }
 
-  const proceedSearch = () => {
-    document.body.style.overflow = 'hidden';
-    document.querySelector('.search-pop-overlay').style.display = 'block';
-    document.querySelector('.popup').style.display = 'block';
-    document.getElementById('search-input').focus();
-  };
-
-  // Search function
-  const searchFunc = () => {
-    document.querySelector('.search-pop-overlay').style.display = '';
-    document.querySelector('.search-pop-overlay').innerHTML = '<div class="search-loading-icon"><i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i></div>';
-    fetchData(proceedSearch);
-  };
-
   if (CONFIG.localsearch.trigger === 'auto') {
     input.addEventListener('input', inputEventFunction);
   } else {
     document.querySelector('.search-icon').addEventListener('click', inputEventFunction);
     input.addEventListener('keypress', event => {
-      if (event.keyCode === 13) {
+      if (event.key === 'Enter') {
         inputEventFunction();
       }
     });
   }
 
   // Handle and trigger popup window
-  document.querySelector('.popup-trigger').addEventListener('click', () => {
-    if (isfetched === false) {
-      searchFunc();
-    } else {
-      proceedSearch();
-    }
+  document.querySelectorAll('.popup-trigger').forEach(element => {
+    element.addEventListener('click', () => {
+      document.body.style.overflow = 'hidden';
+      document.querySelector('.search-pop-overlay').style.display = 'block';
+      isfetched ? input.focus() : fetchData();
+    });
   });
 
   // Monitor main search box
   const onPopupClose = () => {
     document.body.style.overflow = '';
-    document.querySelector('.search-pop-overlay').style.display = 'none';
-    document.querySelector('.popup').style.display = 'none';
+    document.querySelector('.search-pop-overlay').style.display = '';
   };
 
-  document.querySelector('.search-pop-overlay').addEventListener('click', onPopupClose);
+  document.querySelector('.search-pop-overlay').addEventListener('click', event => {
+    if (event.target === document.querySelector('.search-pop-overlay')) {
+      onPopupClose();
+    }
+  });
   document.querySelector('.popup-btn-close').addEventListener('click', onPopupClose);
   window.addEventListener('pjax:success', onPopupClose);
   window.addEventListener('keyup', event => {
-    if (event.which === 27) {
+    if (event.key === 'Escape') {
       onPopupClose();
     }
   });

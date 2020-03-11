@@ -20,10 +20,79 @@ pre, code {
 
 code {
   background: $code-background;
-  border-radius: $code-border-radius;
+  border-radius: 3px;
   color: $code-foreground;
   padding: 2px 4px;
   word-wrap();
+}
+
+.highlight {
+  @extend $code-block;
+
+  *::selection {
+    background: $highlight-selection;
+  }
+
+  pre {
+    border: 0;
+    margin: 0;
+    padding: 10px 0;
+  }
+
+  table {
+    border: 0;
+    margin: 0;
+    width: auto;
+  }
+
+  td {
+    border: 0;
+    padding: 0;
+  }
+
+  figcaption {
+    background: $code-background;
+    color: $highlight-foreground;
+    display: flex;
+    font-size: $table-font-size;
+    justify-content: space-between;
+    line-height: 1.2;
+    padding: .5em;
+
+    a {
+      color: $highlight-foreground;
+
+      &:hover {
+        border-bottom-color: $highlight-foreground;
+      }
+    }
+  }
+
+  .gutter {
+    disable-user-select();
+
+    pre {
+      background: $highlight-gutter.bg-color;
+      color: $highlight-gutter.color;
+      padding-left: 10px;
+      padding-right: 10px;
+      text-align: right;
+    }
+  }
+
+  .code pre {
+    background: $highlight-background;
+    padding-left: 10px;
+    width: 100%;
+  }
+}
+
+.gist table {
+  width: auto;
+
+  td {
+    border: 0;
+  }
 }
 
 pre {
@@ -38,87 +107,6 @@ pre {
     padding: 0;
     text-shadow: none;
   }
-}
-
-.highlight {
-  @extend $code-block;
-
-  *::selection {
-    background: $highlight-selection;
-  }
-
-  pre {
-    border: 0;
-    margin: 0;
-    padding: 0;
-  }
-
-  table {
-    border: 0;
-    margin: 0;
-    width: auto;
-  }
-
-  tr {
-    &:first-child pre {
-      padding-top: 10px;
-    }
-    &:last-child pre {
-      padding-bottom: 10px;
-    }
-  }
-
-  td {
-    border: 0;
-    padding: 0;
-  }
-
-  figcaption {
-    background: $code-background;
-    color: $highlight-foreground;
-    line-height: 1em;
-    margin: 0;
-    padding: .5em;
-    clearfix();
-
-    a {
-      color: $highlight-foreground;
-      float: right;
-
-      &:hover {
-        border-bottom-color: $highlight-foreground;
-      }
-    }
-  }
-
-  .gutter pre {
-    background: $highlight-gutter.bg-color;
-    color: $highlight-gutter.color;
-    padding-left: 10px;
-    padding-right: 10px;
-    text-align: right;
-  }
-
-  .code pre {
-    background: $highlight-background;
-    padding-left: 10px;
-    width: 100%;
-  }
-}
-
-.gutter {
-  disable-user-select();
-}
-
-.gist table {
-  width: auto;
-
-  td {
-    border: 0;
-  }
-}
-
-pre {
   // For diff highlight
   .deletion {
     background: $highlight-deletion;
